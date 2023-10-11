@@ -17,7 +17,7 @@ public class AccountService {
 
 	@Transactional
 	public void createAccount() {
-		Account account = Account.builder().accountNumber("4000")
+		Account account = Account.builder().accountNumber("40000")
 				.accountStatus(AccountStatus.IN_USE).build();
 		accountRepository.save(account);
 	}
