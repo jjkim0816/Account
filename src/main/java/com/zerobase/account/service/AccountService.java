@@ -58,4 +58,43 @@ public class AccountService {
 	public Account getAccount(Long id) {
 		return accountRepository.findById(id).get();
 	}
+
+	@Transactional
+	public AccountDto deleteAccount(Long userId, String accountNumber) {
+		
+		// 사용자가 없는 경우 
+		AccountUser accountUser = accountUserRepository.findById(userId)
+				.orElseThrow(
+						() -> new AccountException(ErrorCode.USER_NOT_FOUND));
+		
+		// 계좌가 없는 경우 
+		Account account = accountRepository.findByAccountNumber(accountNumber)
+				.orElseThrow(
+						() -> new AccountException(ErrorCode.ACCOUNT_NOT_FOUND));
+		
+		validateDeleteAccount(accountUser, account);
+		
+		account.setAccountStatus(AccountStatus.UNREGISTERD);
+		account.setUnRegisteredAt(LocalDateTime.now());
+		
+		return AccountDto.fromEntity(account);
+	}
+
+	private void validateDeleteAccount(AccountUser accountUser, Account account) {
+		
+		// 사용자 아이디와 계좌 소유주가 다른 경우  
+		if(accountUser.getId() != account.getAccountUser().getId()) {
+			throw new AccountException(ErrorCode.USER_ACCOUNT_UNMATCH);
+		}
+		
+		// 계좌가 이미 해지된 상태 
+		if(account.getAccountStatus() == AccountStatus.UNREGISTERD) {
+			throw new AccountException(ErrorCode.ACCOUNT_ALREADY_UNREGISTERED);
+		}
+		
+		// 계좌 잔액이 남은 경우 
+		if(account.getBalance() > 0) {
+			throw new AccountException(ErrorCode.BALANCE_NOT_EMPTY);
+		}
+	}
 }
