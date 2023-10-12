@@ -3,48 +3,69 @@
  */
 package com.zerobase.account.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.util.Optional;
 
 import com.zerobase.account.domain.Account;
-import com.zerobase.account.type.AccountStatus;
+import com.zerobase.account.domain.AccountUser;
+import com.zerobase.account.dto.AccountDto;
+import com.zerobase.account.repository.AccountRepository;
+import com.zerobase.account.repository.AccountUserRepository;
 
-@SpringBootTest
+import static org.junit.jupiter.api.Assertions.*;
+
+@ExtendWith(MockitoExtension.class)
 class AccountServiceTest {
-	@Autowired
+	@Mock
+	private AccountRepository accountRepository;
+	
+	@Mock
+	private AccountUserRepository accountUserRepository;
+	
+	@InjectMocks
 	private AccountService accountService;
-
-	@BeforeEach
-	void init() {
-		accountService.createAccount();
-	}
-
+	
 	@Test
-	void testAccount() {
-		Account account = accountService.getAccount(1L);
-
-		assertEquals("40000", account.getAccountNumber());
-		assertEquals(AccountStatus.IN_USE, account.getAccountStatus());
+	void createAccountSuccess() {
+		// given
+		AccountUser user = AccountUser.builder()
+					.id(12L)
+					.name("Pobi").build();
+		
+		given(accountUserRepository.findById(anyLong()))
+			.willReturn(Optional.of(user));
+		
+		given(accountRepository.findFirstByOrderByIdDesc())
+			.willReturn(Optional.of(Account.builder()
+					.accountNumber("1000000012")
+					.build()));
+		
+		given(accountRepository.save(any()))
+			.willReturn(Account.builder()
+					.accountUser(user)
+					.accountNumber("1000000013")
+					.build());
+		
+		ArgumentCaptor<Account> accountCaptor = ArgumentCaptor.forClass(Account.class); 
+		
+		// when
+		AccountDto accountDto = accountService.createAccount(1L, 1111L);
+		
+		// then
+		verify(accountRepository, times(1)).save(accountCaptor.capture());
+		assertEquals(12L, accountDto.getUserId());
+//		assertEquals("1000000013", accountDto.getAccountNumber());
+		assertEquals("1000000013", accountCaptor.getValue().getAccountNumber());
 	}
-
-	@Test
-	void testAccount2() {
-		Account account = accountService.getAccount(2L);
-
-		assertEquals("40000", account.getAccountNumber());
-		assertEquals(AccountStatus.IN_USE, account.getAccountStatus());
-	}
-
-	@Test
-	void testAccount3() {
-		Account account = accountService.getAccount(3L);
-
-		assertEquals("40000", account.getAccountNumber());
-		assertEquals(AccountStatus.IN_USE, account.getAccountStatus());
-	}
-
 }
