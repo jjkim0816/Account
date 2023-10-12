@@ -31,11 +31,6 @@ public class AccountController {
 		);
 	}
 	
-	@GetMapping("/get-lock")
-	public String getLock() {
-		return redisTestService.getLock();
-	}
-	
 	@GetMapping("/account/{id}")
 	public Account getAccount(@PathVariable Long id) {
 		return accountService.getAccount(id);
