@@ -1,6 +1,8 @@
 package com.zerobase.account.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -98,5 +100,17 @@ public class AccountService {
 		if(account.getBalance() > 0) {
 			throw new AccountException(ErrorCode.BALANCE_NOT_EMPTY);
 		}
+	}
+	
+	@Transactional
+	public List<AccountDto> getAccountsByUserId(Long userId) {
+		AccountUser accountUser = accountUserRepository.findById(userId)
+			.orElseThrow(() -> new AccountException(ErrorCode.USER_NOT_FOUND));
+		
+		List<Account> accounts = accountRepository.findByAccountUser(accountUser);
+		
+		return accounts.stream()
+				.map(AccountDto::fromEntity)
+				.collect(Collectors.toList());
 	}
 }
