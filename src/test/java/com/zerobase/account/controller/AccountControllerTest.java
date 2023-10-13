@@ -8,10 +8,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zerobase.account.domain.Account;
 import com.zerobase.account.dto.AccountDto;
 import com.zerobase.account.dto.CreateAccount;
+import com.zerobase.account.dto.DeleteAccount;
 import com.zerobase.account.service.AccountService;
 import com.zerobase.account.service.RedisTestService;
 import com.zerobase.account.type.AccountStatus;
@@ -19,6 +22,7 @@ import com.zerobase.account.type.AccountStatus;
 import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -56,6 +60,29 @@ class AccountControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(
 						new CreateAccount.Request(3333L, 1111L)
+				)))
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.userId").value(1))
+		.andExpect(jsonPath("$.accountNumber").value("1234567890"));
+	}
+	
+	@Test
+	void successDeleteAccount() throws JsonProcessingException, Exception {
+		// given
+		given(accountService.deleteAccount(anyLong(), anyString()))
+				.willReturn(AccountDto.builder()
+						.userId(1L)
+						.accountNumber("1234567890")
+						.registeredAt(LocalDateTime.now())
+						.unRegisteredAt(LocalDateTime.now())
+						.build());
+		// when
+		// then
+		mockMvc.perform(delete("/account")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(
+					new DeleteAccount.Request(3333L, "0987654321")
 				)))
 		.andDo(print())
 		.andExpect(status().isOk())
