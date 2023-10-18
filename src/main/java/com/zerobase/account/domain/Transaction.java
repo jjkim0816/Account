@@ -14,9 +14,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.zerobase.account.exception.AccountException;
-import com.zerobase.account.type.AccountStatus;
-import com.zerobase.account.type.ErrorCode;
+import com.zerobase.account.type.TransactionResultType;
+import com.zerobase.account.type.TransactionType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,32 +30,28 @@ import lombok.Setter;
 @Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class Account {
+public class Transaction {
 	@Id
 	@GeneratedValue
-	Long id;
-
-	@ManyToOne
-	private AccountUser accountUser;
-	private String accountNumber;
-
+	private Long id;
+	
 	@Enumerated(EnumType.STRING)
-	private AccountStatus accountStatus;
-	private Long balance;
+	private TransactionType transactionType;
+	@Enumerated(EnumType.STRING)
+	private TransactionResultType transactionResultType;
+	
+	@ManyToOne
+	private Account account;
 
-	private LocalDateTime registeredAt;
-	private LocalDateTime unRegisteredAt;
+	private Long amount;
+	private Long balanceSnapshot;
 
+	private String transactionId;
+	private LocalDateTime transactedAt;
+	
 	@CreatedDate
 	private LocalDateTime createdAt;
 	@LastModifiedDate
 	private LocalDateTime updatedAt;
-
-	public void useBalance(Long amount) {
-		if (amount > balance) {
-			throw new AccountException(ErrorCode.AMOUNT_EXCEED_BALANCE);
-		}
-
-		balance -= amount;
-	}
+	
 }
