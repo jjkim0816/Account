@@ -2,11 +2,14 @@ package com.zerobase.account.controller;
 
 import javax.validation.Valid;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zerobase.account.dto.CancelBalance;
+import com.zerobase.account.dto.QueryTransactionResponse;
 import com.zerobase.account.dto.UseBalance;
 import com.zerobase.account.exception.AccountException;
 import com.zerobase.account.service.TransactionService;
@@ -25,6 +28,15 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class TransactionController {
 	private final TransactionService transactionService;
+	
+	@GetMapping("/transaction/{transactionId}")
+	public QueryTransactionResponse queryTransaction(
+		@PathVariable String transactionId
+	) {
+		return QueryTransactionResponse.from(
+			transactionService.queryTransactionId(transactionId)
+		);
+	}
 	
 	@PostMapping("/transaction/use")
 	public UseBalance.Response useBalance(

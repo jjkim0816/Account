@@ -139,4 +139,12 @@ public class TransactionService {
 		
 		saveAndGetTransaction(TransactionType.CANCEL, TransactionResultType.F, amount, account);
 	}
+
+	@Transactional
+	public TransactionDto queryTransactionId(String transactionId) {
+		return TransactionDto.fromEntity(
+			transactionRepository.findByTransactionId(transactionId)
+				.orElseThrow(() -> new AccountException(ErrorCode.TRANSACTION_NOT_FOUND))
+		);
+	}
 }
