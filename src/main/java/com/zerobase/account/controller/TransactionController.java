@@ -45,7 +45,7 @@ public class TransactionController {
 		@Valid @RequestBody UseBalance.Request request
 	) throws InterruptedException {
 		try {
-			Thread.sleep(3000L); // 동시성 테스트를 위해 삽입 
+//			Thread.sleep(3000L); // 동시성 테스트를 위해 삽입 
 			return UseBalance.Response.from(transactionService.useBalance(request.getUserId()
 					, request.getAccountNumber(), request.getAmount()));
 		} catch (AccountException e) {

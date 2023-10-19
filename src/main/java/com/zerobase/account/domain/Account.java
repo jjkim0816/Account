@@ -3,16 +3,9 @@ package com.zerobase.account.domain;
 import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.zerobase.account.exception.AccountException;
 import com.zerobase.account.type.AccountStatus;
@@ -30,12 +23,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class Account {
-	@Id
-	@GeneratedValue
-	Long id;
-
+public class Account extends BaseEntity {
 	@ManyToOne
 	private AccountUser accountUser;
 	private String accountNumber;
@@ -46,11 +34,6 @@ public class Account {
 
 	private LocalDateTime registeredAt;
 	private LocalDateTime unRegisteredAt;
-
-	@CreatedDate
-	private LocalDateTime createdAt;
-	@LastModifiedDate
-	private LocalDateTime updatedAt;
 
 	public void useBalance(Long amount) {
 		if (amount > balance) {
