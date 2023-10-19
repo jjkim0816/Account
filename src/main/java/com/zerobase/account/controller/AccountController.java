@@ -25,6 +25,24 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AccountController {
 	private final AccountService accountService;
+	
+	@GetMapping("/account")
+	public List<AccountInfo> getAccountByUserId(
+		@RequestParam("user_id") Long userId
+	) {
+		return accountService.getAccountsByUserId(userId)
+					.stream()
+					.map(accountDto -> AccountInfo.builder()
+							.accountNumber(accountDto.getAccountNumber())
+							.balance(accountDto.getBalance())
+							.build())
+					.collect(Collectors.toList());
+	}
+	
+	@GetMapping("/account/{id}")
+	public Account getAccount(@PathVariable Long id) {
+		return accountService.getAccount(id);
+	}
 
 	@PostMapping("/account")
 	public CreateAccount.Response createAccount(
@@ -46,23 +64,5 @@ public class AccountController {
 					request.getAccountNumber()
 				)
 		);
-	}
-	
-	@GetMapping("/account")
-	public List<AccountInfo> getAccountByUserId(
-		@RequestParam("user_id") Long userId
-	) {
-		return accountService.getAccountsByUserId(userId)
-					.stream()
-					.map(accountDto -> AccountInfo.builder()
-							.accountNumber(accountDto.getAccountNumber())
-							.balance(accountDto.getBalance())
-							.build())
-					.collect(Collectors.toList());
-	}
-	
-	@GetMapping("/account/{id}")
-	public Account getAccount(@PathVariable Long id) {
-		return accountService.getAccount(id);
 	}
 }
