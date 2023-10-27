@@ -13,9 +13,9 @@ import com.zerobase.account.domain.AccountUser;
 public interface AccountRepository extends JpaRepository<Account, Long> {
 	Optional<Account> findFirstByOrderByIdDesc();
 	
-	Integer countByAccountUser(AccountUser accountUser);
+	Integer countByAccountUser(AccountUser AccountUser);
 
-	Optional<Account> findByAccountNumber(String accountNumber);
+	Optional<Account> findByAccountNumber(String AccountNumber);
 
-	List<Account> findByAccountUser(AccountUser accountUser);
+	List<Account> findByAccountUser(AccountUser AccountUser);
 }

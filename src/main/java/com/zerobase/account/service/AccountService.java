@@ -35,7 +35,7 @@ public class AccountService {
 		validateCreateAccount(accountUser);
 
 		String newAccountNumber = accountRepository.findFirstByOrderByIdDesc()
-				.map(account -> (Integer.parseInt(account.getAccountNumber())) + 1 + "")
+				.map(account -> (String.valueOf(Integer.parseInt(account.getAccountNumber())+ 1)))
 				.orElse("1000000000");
 
 		return AccountDto.fromEntity(accountRepository.save(Account.builder()

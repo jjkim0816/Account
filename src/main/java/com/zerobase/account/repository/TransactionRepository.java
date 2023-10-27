@@ -8,6 +8,6 @@ import com.zerobase.account.domain.Transaction;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long>{
 
-	Optional<Transaction> findByTransactionId(String transactionId);
+	Optional<Transaction> findByTransactionId(String TransactionId);
 
 }

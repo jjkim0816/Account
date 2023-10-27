@@ -22,9 +22,7 @@ import com.zerobase.account.type.TransactionResultType;
 import com.zerobase.account.type.TransactionType;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TransactionService {

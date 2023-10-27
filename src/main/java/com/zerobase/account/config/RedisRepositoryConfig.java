@@ -16,7 +16,7 @@ public class RedisRepositoryConfig {
 	private int redisPort;
 
 	@Bean
-	public RedissonClient redissonClient() {
+	RedissonClient redissonClient() {
 		Config config = new Config();
 		config.useSingleServer()
 				.setAddress("redis://" + redisHost + ":" + redisPort);

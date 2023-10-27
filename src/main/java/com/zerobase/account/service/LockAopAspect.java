@@ -8,11 +8,9 @@ import org.springframework.stereotype.Component;
 import com.zerobase.account.aop.AccountLockIdInterface;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Aspect
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class LockAopAspect {
 	private final LockService lockService;
